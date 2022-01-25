@@ -11,12 +11,16 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/BufferedPort.h>
 
 #include <boost/shared_ptr.hpp>
 #include <gazebo/rendering/Camera.hh>
 #include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/rendering/DepthCamera.hh>
 #include <gazebo/sensors/DepthCameraSensor.hh>
+#include <random>
+#include <cmath>
+#include <math.h>
 
 #include <mutex>
 
@@ -130,6 +134,16 @@ private:
     gazebo::event::ConnectionPtr              m_updateDepthFrame_Connection;
     gazebo::event::ConnectionPtr              m_updateRGBPointCloud_Connection;
     gazebo::event::ConnectionPtr              m_updateImageFrame_Connection;
+
+    // Noise and data quantization related parameters
+    bool                             m_depthNoiseEnabled{false};
+    bool                             m_depthQuantizationEnabled{false};
+    int                              m_depthDecimalNum{0};
+    double                           m_depthNoiseAvg{0};
+    double                           m_depthNoiseStd{0.07};
+    std::default_random_engine       m_noiseGen;
+    std::normal_distribution<float>  m_noiseDistro{0,0.07};
+
 };
 
 #endif // GAZEBOYARP_DEPTHCAMERADRIVER_H
